@@ -1,0 +1,189 @@
+<html>
+<head>
+<title>Table add Row</title>
+<script src="sorttable.js"></script>
+<style>
+table {
+    font-family: arial, sans-serif;
+    width: 100%;
+    border: 1px solid #000000;
+}
+td,th {
+    border: 1px solid #000000;
+    text-align: center;
+    padding: 20px;
+}
+th{
+  background-color: #ffffff;
+}
+td:nth-child(1)
+{
+  width : 18%;
+}
+tr:nth-child(even){
+  background-color: #FFC300;
+}
+tr:nth-child(odd){
+  background-color: #FF96AC;
+}
+button{
+  margin: 10px;
+}
+table.sortable th::after, th.sorttable_sorted::after, th.sorttable_sorted_reverse::after {
+  content: " ";
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+}
+th.sorttable_sorted::after {
+  background: url(my-sorted-icon.png);
+  background-size: contain;
+}
+th.sorttable_sorted_reverse::after {
+  background: url(my-sorted-reversed-icon.png);
+  background-size: cover;
+
+  table.sortable tbody {
+    counter-reset: sortabletablescope;
+}
+table.sortable thead tr::before {
+    content: "";
+    display: table-cell;
+}
+table.sortable tbody tr::before {
+    content: counter(sortabletablescope);
+    counter-increment: sortabletablescope;
+    display: table-cell;
+}
+}
+</style>
+
+</head>
+
+<body>
+<table id="DataTable" class="sortable">
+  <thead>
+<tr>
+  <th class="sorttable_nosort">Action</th>
+  <th class="sorttable_numeric">Emp-No </th>
+  <th>Emp-Name </th>
+  <th>Department </th>
+  <th class="sorttable_numeric">Salary</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>
+    <input type="button" onclick="Toggle(this)" value="Edit"/>
+    <input type="button" value="Cancel" onclick="Delete(this)"/>
+    <input type="hidden" id="hdd1" value="1"/>
+  </td>
+  <td><a id="1" href="javascript:DetailShow(1)">101</a></td>
+  <td>David</td>
+  <td>Manager</td>
+  <td>50,000</td>
+</tr>
+<tr>
+  <td>
+    <input type="button" onclick="Toggle(this)" value="Edit"/>
+    <input type="button" value="Cancel" onclick="Delete(this)"/>
+    <input type="hidden" id="hdd2" value="2"/>
+  </td>
+  <td><a id="2" href="javascript:DetailShow(2)">102</a></td>
+  <td>Stephnes</td>
+  <td>Marketing</td>
+  <td>70,000</td>
+</tr>
+</tbody>
+</table>
+<button type="button" onclick="AddRow()" style="margin-left:250px;">Add Row</button>
+<script>
+var rowNum=0;
+
+function AddRow() {
+  var table = document.getElementById('DataTable');
+  var rowCount = table.rows.length;
+  rowNum=rowCount;
+    var row = table.insertRow(rowCount);
+    var cell1 = row.insertCell(0);
+    var cell2 = row.insertCell(1);
+    var cell3 = row.insertCell(2);
+    var cell4 = row.insertCell(3);
+    var cell5 = row.insertCell(4);
+    cell1.innerHTML = '<input type="button" value = "Save" onclick="Toggle(this)"/>'+
+    '<input type="button" style="margin-left:5px;" value = "Cancel" onclick="Delete(this)"/><input type="hidden" id="hdd'+rowCount+'" value="'+rowCount+'"/>';
+    cell2.innerHTML = '<input type = "number" id = "text1'+rowCount+'" />';
+    cell3.innerHTML = '<input type = "text" id = "text2'+rowCount+'" />';
+    cell4.innerHTML = '<input type = "text" id = "text3'+rowCount+'" />';
+    cell5.innerHTML = '<input type = "text" id = "text4'+rowCount+'" />';
+}
+
+function Toggle(button) {
+  switch (button.value) {
+    case "Edit":
+    Edit(button);
+      button.value ="Save";
+      break;
+      case "Save":
+      var i = button.parentNode.parentNode.rowIndex;
+      var txt1 = document.getElementById("text1"+i).value;
+      var txt2 = document.getElementById("text2"+i).value;
+      var txt3 = document.getElementById("text3"+i).value;
+      var txt4 = document.getElementById("text4"+i).value;
+      if(txt1!=""&&txt2!=""&&txt3!=""&&txt4!=""){
+      var x = document.getElementById("DataTable").rows[i].cells;
+      x[1].innerHTML = '<a id="'+i+'" href="javascript:DetailShow('+i+')">'+txt1+'</a>';
+      x[2].innerHTML = txt2;
+      x[3].innerHTML = txt3;
+      x[4].innerHTML = txt4;
+      button.value ="Edit";
+      break;
+    }else {
+      alert("Fill all entries");
+    }
+
+  }
+}
+
+function Delete(r) {
+  var i = r.parentNode.parentNode.rowIndex;
+      document.getElementById("DataTable").deleteRow(i);
+}
+
+function Edit(r) {
+  var i = r.parentNode.parentNode.rowIndex;
+  var x = document.getElementById("DataTable").rows[i].cells;
+  var h  = document.getElementById("hdd"+i).value;
+  var txt1 =  document.getElementById(i).text;
+  var txt2 =  x[2].innerHTML;
+  var txt3 =  x[3].innerHTML;
+  var txt4 =  x[4].innerHTML;
+  x[1].innerHTML = '<input type = "number" id = "text1'+h+'" value = "'+txt1+'" />';
+  x[2].innerHTML = '<input type = "text" id = "text2'+h+'" value = "'+txt2+'" />';
+  x[3].innerHTML = '<input type = "text" id = "text3'+h+'" value = "'+txt3+'" />';
+  x[4].innerHTML = '<input type = "text" id = "text4'+h+'" value = "'+txt4+'" />';
+}
+
+function DetailShow(r) {
+  var x = document.getElementById("DataTable").rows[r].cells;
+  var id = document.getElementById(r).text;
+  var name = x[2].innerHTML;
+  var dept = x[3].innerHTML;
+  var sal = x[4].innerHTML;
+  var newPage = "<html><head><title>";
+  newPage += "Details";
+  newPage += "</title></head><body>";
+  newPage += "<h2>Personal Details: </h2>";
+  newPage += "<p><b>Emp-No: </b>"+id+"</p>";
+  newPage += "<p><b>Emp-Name: </b>"+name+"</p>";
+  newPage += "<p><b>Department: </b>"+dept+"</p>";
+  newPage += "<p><b>Salary: </b>"+sal+"</p>";
+  newPage += "</body></html>";
+  var j = window.open('');
+  j.document.write(newPage);
+}
+
+</script>
+
+</body>
+</html>
